@@ -40,6 +40,17 @@ logging.basicConfig(
 )
 
 
+def _resolve_uv() -> Path:
+    """Return the absolute path to the uv executable."""
+    uv_env = os.environ.get("UV_EXE")
+    if uv_env:
+        return Path(uv_env)
+    candidate = Path.home() / ".local" / "bin" / "uv.exe"
+    if candidate.exists():
+        return candidate
+    return Path("uv")
+
+
 def load_flush_state() -> dict:
     if STATE_FILE.exists():
         try:
@@ -174,7 +185,8 @@ def maybe_trigger_compilation() -> None:
 
     logging.info("End-of-day compilation triggered (after %d:00)", COMPILE_AFTER_HOUR)
 
-    cmd = ["uv", "run", "--directory", str(ROOT), "python", str(compile_script)]
+    uv_exe = _resolve_uv()
+    cmd = [str(uv_exe), "run", "--directory", str(ROOT), "python", str(compile_script)]
 
     kwargs: dict = {}
     if sys.platform == "win32":

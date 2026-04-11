@@ -143,8 +143,15 @@ def main() -> None:
     # Spawn flush.py as a background process
     flush_script = SCRIPTS_DIR / "flush.py"
 
+    uv_exe = Path(os.environ.get("UV_EXE", "uv"))
+    if not uv_exe.is_absolute():
+        # Try known Windows install location
+        candidate = Path.home() / ".local" / "bin" / "uv.exe"
+        if candidate.exists():
+            uv_exe = candidate
+
     cmd = [
-        "uv",
+        str(uv_exe),
         "run",
         "--directory",
         str(ROOT),
