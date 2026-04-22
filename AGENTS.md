@@ -91,8 +91,8 @@ Format:
 
 | Article | Summary | Compiled From | Updated |
 |---------|---------|---------------|---------|
-| [[concepts/supabase-auth]] | Row-level security patterns and JWT gotchas | daily/2026-04-02.md | 2026-04-02 |
-| [[connections/auth-and-webhooks]] | Token verification patterns shared across Supabase auth and Stripe webhooks | daily/2026-04-02.md, daily/2026-04-04.md | 2026-04-04 |
+| [supabase-auth](concepts/supabase-auth.md) | Row-level security patterns and JWT gotchas | daily/2026-04-02.md | 2026-04-02 |
+| [auth-and-webhooks](connections/auth-and-webhooks.md) | Token verification patterns shared across Supabase auth and Stripe webhooks | daily/2026-04-02.md, daily/2026-04-04.md | 2026-04-04 |
 ```
 
 ### `knowledge/log.md` - Build Log
@@ -106,12 +106,12 @@ Format:
 
 ## [2026-04-01T14:30:00] compile | Daily Log 2026-04-01
 - Source: daily/2026-04-01.md
-- Articles created: [[concepts/nextjs-project-structure]], [[concepts/tailwind-setup]]
+- Articles created: [nextjs-project-structure](concepts/nextjs-project-structure.md), [tailwind-setup](concepts/tailwind-setup.md)
 - Articles updated: (none)
 
 ## [2026-04-02T09:00:00] query | "How do I handle auth redirects?"
-- Consulted: [[concepts/supabase-auth]], [[concepts/nextjs-middleware]]
-- Filed to: [[qa/auth-redirect-handling]]
+- Consulted: [supabase-auth](concepts/supabase-auth.md), [nextjs-middleware](concepts/nextjs-middleware.md)
+- Filed to: [auth-redirect-handling](qa/auth-redirect-handling.md)
 ```
 
 ---
@@ -153,12 +153,12 @@ status: current  # current | superseded | fixed | deferred
 
 ## Related Concepts
 
-- [[concepts/related-concept]] - How it connects
+- [related-concept](concepts/related-concept.md) - How it connects
 
 ## Sources
 
-- [[daily/2026-04-01.md]] - Initial discovery during project setup
-- [[daily/2026-04-03.md]] - Updated after debugging session
+- daily/2026-04-01.md - Initial discovery during project setup
+- daily/2026-04-03.md - Updated after debugging session
 ```
 
 ### Cross-Concept Insights (embedded, not separate files)
@@ -195,8 +195,8 @@ filed: 2026-04-05
 
 ## Sources Consulted
 
-- [[concepts/article-1]] - Relevant because...
-- [[concepts/article-2]] - Provided context on...
+- [article-1](concepts/article-1.md) - Relevant because...
+- [article-2](concepts/article-2.md) - Provided context on...
 
 ## Follow-Up Questions
 
@@ -227,7 +227,7 @@ When processing a daily log:
 - A single daily log may touch 3-10 knowledge articles
 - Prefer updating existing articles over creating near-duplicates; check aliases before creating
 - Every article **must** include `status:` in frontmatter and `## TL;DR` as the first section after the opening paragraph — these are required, not optional
-- Use Obsidian-style `[[wikilinks]]` with full relative paths from knowledge/
+- Use standard markdown links `[slug](path/to/slug.md)` with `.md` extension — do NOT use Obsidian `[[wikilinks]]`
 - Write in encyclopedia style - factual, concise, self-contained
 - Every article must have YAML frontmatter
 - Every article must link back to its source daily logs
@@ -237,7 +237,7 @@ When processing a daily log:
 1. Read `knowledge/index.md` (the master catalog)
 2. Based on the question, identify 3-10 relevant articles from the index
 3. Read those articles in full
-4. Synthesize an answer with `[[wikilink]]` citations
+4. Synthesize an answer with `[slug](path/slug.md)` markdown link citations
 5. If `--file-back` is specified: create a `knowledge/qa/` article and update index.md and log.md
 
 **Why this works without RAG:** At personal knowledge base scale (50-500 articles), the LLM reading a structured index outperforms cosine similarity. The LLM understands what the question is really asking and selects pages accordingly. Embeddings find similar words; the LLM finds relevant concepts.
@@ -246,7 +246,7 @@ When processing a daily log:
 
 Seven checks, run periodically:
 
-1. **Broken links** - `[[wikilinks]]` pointing to non-existent articles
+1. **Broken links** - markdown links `[text](path.md)` pointing to non-existent files
 2. **Orphan pages** - Articles with zero inbound links from other articles
 3. **Orphan sources** - Daily logs that haven't been compiled yet
 4. **Stale articles** - Source daily log changed since article was last compiled
@@ -260,7 +260,7 @@ Output: a markdown report with severity levels (error, warning, suggestion).
 
 ## Conventions
 
-- **Wikilinks:** Use Obsidian-style `[[path/to/article]]` without `.md` extension
+- **Links:** Use standard markdown `[slug](path/to/slug.md)` with `.md` extension — Obsidian `[[wikilinks]]` are NOT used in this knowledge base
 - **Writing style:** Encyclopedia-style, factual, third-person where appropriate
 - **Dates:** ISO 8601 (YYYY-MM-DD for dates, full ISO for timestamps in log.md)
 - **File naming:** lowercase, hyphens for spaces (e.g., `supabase-row-level-security.md`)
