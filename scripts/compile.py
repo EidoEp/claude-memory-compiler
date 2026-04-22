@@ -92,18 +92,26 @@ Read the daily log above and compile it into wiki articles following the schema 
 ### Rules:
 
 1. **Extract key concepts** - Identify 3-7 distinct concepts worth their own article
-2. **Create concept articles** in `knowledge/concepts/` - One .md file per concept
+2. **Dedup before creating** - For each candidate concept:
+   - Scan `knowledge/index.md` for a matching title
+   - Grep existing articles for a matching value in their `aliases:` frontmatter list
+   - If any match exists: UPDATE that article — do not create a new file
+   - Only create a new file when no title or alias match exists
+3. **Create concept articles** in `knowledge/concepts/` - One .md file per concept
    - Use the exact article format from AGENTS.md (YAML frontmatter + sections)
+   - **Required frontmatter fields:** `title`, `aliases`, `tags`, `sources`, `created`, `updated`, `status` (current | superseded | fixed | deferred)
+   - **Required sections (in order):** opening paragraph, `## TL;DR` (3-5 bullets — distill before expanding), `## Key Points`, `## Details`, `## Related Concepts`, `## Sources`
    - Include `sources:` in frontmatter pointing to the daily log file
    - Use `[[concepts/slug]]` wikilinks to link to related concepts
    - Write in encyclopedia style - neutral, comprehensive
-3. **Create connection articles** in `knowledge/connections/` if this log reveals non-obvious
-   relationships between 2+ existing concepts
-4. **Update existing articles** if this log adds new information to concepts already in the wiki
-   - Read the existing article, add the new information, add the source to frontmatter
-5. **Update knowledge/index.md** - Add new entries to the table
+4. **Cross-concept insights** - If this log reveals a non-obvious relationship between 2+ existing concepts:
+   - Add a `## Connection: [Topic]` section to the most relevant concept file
+   - Do **not** create a separate file in `knowledge/connections/`
+5. **Update existing articles** if this log adds new information to concepts already in the wiki
+   - Read the existing article, add the new information, add the source to frontmatter, bump `updated:`
+6. **Update knowledge/index.md** - Add new entries to the table
    - Each entry: `| [[path/slug]] | One-line summary | source-file | {timestamp[:10]} |`
-6. **Append to knowledge/log.md** - Add a timestamped entry:
+7. **Append to knowledge/log.md** - Add a timestamped entry:
    ```
    ## [{timestamp}] compile | {log_path.name}
    - Source: daily/{log_path.name}

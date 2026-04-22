@@ -132,11 +132,16 @@ sources:
   - "daily/2026-04-03.md"
 created: 2026-04-01
 updated: 2026-04-03
+status: current  # current | superseded | fixed | deferred
 ---
 
 # Concept Name
 
 [2-4 sentence core explanation]
+
+## TL;DR
+
+- [3-5 bullets — the actionable core an LLM needs without reading further]
 
 ## Key Points
 
@@ -156,41 +161,17 @@ updated: 2026-04-03
 - [[daily/2026-04-03.md]] - Updated after debugging session
 ```
 
-### Connection Articles (`knowledge/connections/`)
+### Cross-Concept Insights (embedded, not separate files)
 
-Cross-cutting synthesis linking 2+ concepts. Created when a conversation reveals a non-obvious relationship.
+When a conversation reveals a non-obvious relationship between 2+ existing concepts, embed the insight directly into the most relevant concept file as a `## Connection: [Topic]` section — do **not** create a separate file in `connections/`.
 
 ```markdown
----
-title: "Connection: X and Y"
-connects:
-  - "concepts/concept-x"
-  - "concepts/concept-y"
-sources:
-  - "daily/2026-04-04.md"
-created: 2026-04-04
-updated: 2026-04-04
----
+## Connection: [Other Concept Name]
 
-# Connection: X and Y
-
-## The Connection
-
-[What links these concepts]
-
-## Key Insight
-
-[The non-obvious relationship discovered]
-
-## Evidence
-
-[Specific examples from conversations]
-
-## Related Concepts
-
-- [[concepts/concept-x]]
-- [[concepts/concept-y]]
+[2-4 sentences: what the non-obvious link is, why it matters, consequence of missing it]
 ```
+
+**Why embedded:** Separate connection files require knowing to look for them. Embedding the insight in the concept file the reader is already in means the link is discovered at the right moment. It also reduces total file count and eliminates a retrieval layer.
 
 ### Q&A Articles (`knowledge/qa/`)
 
@@ -235,15 +216,17 @@ When processing a daily log:
 2. Read `knowledge/index.md` to understand current knowledge state
 3. Read existing articles that may need updating
 4. For each piece of knowledge found in the log:
-   - If an existing concept article covers this topic: UPDATE it with new information, add the daily log as a source
-   - If it's a new topic: CREATE a new `concepts/` article
-5. If the log reveals a non-obvious connection between 2+ existing concepts: CREATE a `connections/` article
+   - **Before creating a new article:** check `index.md` titles AND grep existing articles for matching `aliases:` values. If any match — UPDATE that article; do not create a new file.
+   - If an existing concept article covers this topic: UPDATE it, add the daily log as a source, bump `updated:`
+   - If it is genuinely a new topic with no alias overlap: CREATE a new `concepts/` article
+5. If the log reveals a non-obvious connection between 2+ existing concepts: add a `## Connection: [Topic]` section to the most relevant concept file. Do **not** create a separate `connections/` file.
 6. UPDATE `knowledge/index.md` with new/modified entries
 7. APPEND to `knowledge/log.md`
 
 **Important guidelines:**
 - A single daily log may touch 3-10 knowledge articles
-- Prefer updating existing articles over creating near-duplicates
+- Prefer updating existing articles over creating near-duplicates; check aliases before creating
+- Every article **must** include `status:` in frontmatter and `## TL;DR` as the first section after the opening paragraph — these are required, not optional
 - Use Obsidian-style `[[wikilinks]]` with full relative paths from knowledge/
 - Write in encyclopedia style - factual, concise, self-contained
 - Every article must have YAML frontmatter

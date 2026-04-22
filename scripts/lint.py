@@ -145,6 +145,43 @@ def check_sparse_articles() -> list[dict]:
     return issues
 
 
+def check_missing_required_fields() -> list[dict]:
+    """Check concept articles for missing status: frontmatter and ## TL;DR section."""
+    import re
+
+    issues = []
+    for article in list_wiki_articles():
+        # Only enforce on concepts/, not qa/ or other subdirs
+        rel = article.relative_to(KNOWLEDGE_DIR)
+        if not str(rel).startswith("concepts"):
+            continue
+
+        content = article.read_text(encoding="utf-8")
+
+        # Check status: in frontmatter (between opening --- and closing ---)
+        fm_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+        if fm_match:
+            frontmatter = fm_match.group(1)
+            if "status:" not in frontmatter:
+                issues.append({
+                    "severity": "warning",
+                    "check": "missing_status",
+                    "file": str(rel),
+                    "detail": "Missing required frontmatter field: status (current | superseded | fixed | deferred)",
+                })
+
+        # Check ## TL;DR section exists
+        if "## TL;DR" not in content:
+            issues.append({
+                "severity": "warning",
+                "check": "missing_tldr",
+                "file": str(rel),
+                "detail": "Missing required ## TL;DR section",
+            })
+
+    return issues
+
+
 async def check_contradictions() -> list[dict]:
     """Use LLM to detect contradictions across articles."""
     from claude_agent_sdk import (
@@ -267,6 +304,7 @@ def main():
         ("Stale articles", check_stale_articles),
         ("Missing backlinks", check_missing_backlinks),
         ("Sparse articles", check_sparse_articles),
+        ("Missing required fields (status/TL;DR)", check_missing_required_fields),
     ]
 
     for name, check_fn in checks:
