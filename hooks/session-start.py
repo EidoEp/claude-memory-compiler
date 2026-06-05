@@ -27,6 +27,14 @@ KNOWLEDGE_DIR = ROOT / "knowledge"
 DAILY_DIR = ROOT / "daily"
 INDEX_FILE = KNOWLEDGE_DIR / "index.md"
 
+# KIT-PATCH: also inject the wiki's static memory layer + recent wiki/log.md events.
+# This compiler is bundled inside integrations-wiki, so ROOT.parent is the wiki root
+# and `memory/MEMORY.md` + `wiki/log.md` live there.
+WIKI_ROOT = ROOT.parent
+WIKI_MEMORY_INDEX = WIKI_ROOT / "memory" / "MEMORY.md"
+WIKI_ACTIVITY_LOG = WIKI_ROOT / "wiki" / "log.md"
+WIKI_LOG_TAIL_LINES = 40
+
 MAX_CONTEXT_CHARS = 20_000
 MAX_LOG_LINES = 30
 
@@ -55,6 +63,14 @@ def build_context() -> str:
     today = datetime.now(timezone.utc).astimezone()
     parts.append(f"## Today\n{today.strftime('%A, %B %d, %Y')}")
 
+    # KIT-PATCH: wiki's static memory layer (always loaded; complements the
+    # compiler's accumulated knowledge layer). This is the human-authored seed
+    # (feedback rules, user/project/reference memories) that sits alongside the
+    # auto-grown knowledge base.
+    if WIKI_MEMORY_INDEX.exists():
+        wiki_memory = WIKI_MEMORY_INDEX.read_text(encoding="utf-8")
+        parts.append(f"## Wiki Memory (static)\n\n{wiki_memory}")
+
     # Knowledge base index (the core retrieval mechanism)
     if INDEX_FILE.exists():
         index_content = INDEX_FILE.read_text(encoding="utf-8")
@@ -65,6 +81,16 @@ def build_context() -> str:
     # Recent daily log
     recent_log = get_recent_log()
     parts.append(f"## Recent Daily Log\n\n{recent_log}")
+
+    # KIT-PATCH: tail of the wiki's activity log (wiki/log.md) — recent
+    # ingest/query events, including survey-trail / negative-provenance lines.
+    if WIKI_ACTIVITY_LOG.exists():
+        try:
+            log_lines = WIKI_ACTIVITY_LOG.read_text(encoding="utf-8").splitlines()
+            tail = "\n".join(log_lines[-WIKI_LOG_TAIL_LINES:])
+            parts.append(f"## Wiki Activity Log (recent)\n\n{tail}")
+        except Exception:
+            pass
 
     context = "\n\n---\n\n".join(parts)
 

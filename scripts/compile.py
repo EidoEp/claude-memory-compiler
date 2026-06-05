@@ -132,6 +132,16 @@ Read the daily log above and compile it into wiki articles following the schema 
 - Details section should have 2+ paragraphs
 - Related Concepts section should have 2+ entries
 - Sources section should cite the daily log with specific claims extracted
+
+### KIT-PATCH: Survey trail requirement (integrations-wiki only)
+When the daily log contains a `query`-kind entry (a question answered from the wiki),
+the compiled article MUST include a `## Survey trail` section listing:
+  - **Folders searched with hits**: <wiki folders that produced citations — products/, integrations/, categories/, collection-methods/, log-types/, use-cases/>
+  - **Folders searched without hits**: <folders that were searched but had no relevant material>
+
+The "without hits" record is load-bearing — it is what prevents a future session from
+re-searching folders that have already been ruled out for this question. Do NOT omit
+folders-with-no-hits even when the article is otherwise short.
 """
 
     cost = 0.0
